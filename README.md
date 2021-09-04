@@ -3,6 +3,8 @@
 * Save HashiCorp's Vault secrets as json/yaml dump 
 * Populate specific Vault prefix from json/yaml dump 
 
+![vault-backup](images/logo.png)
+
 You can read how to create scheduled backup with Jenkis in this post:
 [Scheduled backup of Vault secrets with Jenkins on Kubernetes](http://igorzhivilo.com/)
 
@@ -149,5 +151,5 @@ vault.populate_vault_from_dump('jenkins', 'vault_secrets.json', 'json', True)
 * example of how to run scheduled backup from Jenkins
 * example of how to run scheduled backup using vault_handler and k8s cronjob
 
-PRs with with improvements/features are welcomed!
+PRs with improvements/features are welcomed!
 
