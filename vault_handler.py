@@ -1,3 +1,19 @@
+#! /usr/bin/env python
+#
+# Backup/create encrypted/not encrypted dumps from HashiCorps's Vault secrets to json/yaml dumps
+# Populate Vault from json/yaml dump
+#
+# ENV variables:
+# VAULT_ADDR: for example: 'http://vault.vault.svc.cluster.local:8200' for k8s cluster
+# ROLE_ID: RoleID for AppRole auth
+# SECRET_ID: SecretID for AppRole auth
+# VAULT_PREFIX: for example 'jenkins'
+# DUMP_ENCRYPTION_PASSWORD: password which will be used for secrets dump encryption
+
+#
+# Copyright (c) 2021 Igor Zhivilo <igor.zhivilo@gmail.com>
+# Licensed under the MIT License
+
 import hvac
 import os
 import yaml
@@ -140,4 +156,4 @@ class VaultHandler:
 
 vault = VaultHandler(VAULT_ADDR, ROLE_ID, SECRET_ID, VAULT_PREFIX, DUMP_ENCRYPTION_PASSWORD)
 vault.dump_all_secrets_to_json()
-# vault.populate_vault_from_dump('testx', 'vault_secrets.json', 'json', False)
+# vault.populate_vault_from_dump('jenkins', 'vault_secrets.json', 'json', False)

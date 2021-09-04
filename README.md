@@ -4,7 +4,7 @@
 * Populate specific Vault prefix from json/yaml dump 
 
 You can read how to create scheduled backup with Jenkis in this post:
-[Scheduled backups of Vault secrets with Jenkins on Kubernetes](https://medium.com/p/10dd2df28d5c/edit)
+[Scheduled backup of Vault secrets with Jenkins on Kubernetes](http://igorzhivilo.com/)
 
 ## You can use it to:
 
@@ -28,13 +28,13 @@ https://codeburst.io/read-vaults-secrets-from-jenkin-s-declarative-pipeline-50a6
 
 ### How to enable AppRole auth and get RoleID and SecretID
 
-#### Enable approle on vault
+#### Enable approle on vault (using CLI)
 
 ``` bash
 $ vault auth enable approle
 ```
 
-#### Make sure a v2 kv secrets engine enabled:
+#### Make sure a v2 kv secrets engine enabled (using CLI)
 
 ``` bash
 $ vault secrets enable kv-v2
@@ -42,13 +42,15 @@ $ vault secrets enable kv-v2
 
 #### Create policy via Vault's UI:
 
+I run vault inside of Kubernetes(EKS) cluster, UI not publically available that why I use port-forwarding
+
 ``` bash
 $ kubectl port-forward -n vault svc/vault 8200
 Forwarding from 127.0.0.1:8200 -> 8200
 Forwarding from [::1]:8200 -> 8200
 ```
 
-Go to policy tab -> Create ACL Policy
+Go to policy tab -> Create ACL Policy (jenkins policy in this example)
 
 ![vault-backup](images/1.png)
 
@@ -73,23 +75,23 @@ path "secret/metadata/jenkins/*" {
 }
 ```
 
-create this policy
+click 'create' this policy
 
-run via vault CLI:
+attach to jenkins approle -> jenkins policy (using CLI)
 
 ``` bash
 $ vault write auth/approle/role/jenkins token_policies=jenkins \
  token_ttl=1h token_max_ttl=4h
 ```
 
-#### Get RoleID and SecretID
+#### Get RoleID and SecretID (using CLI)
 
 ``` bash
 $ vault read auth/approle/role/jenkins/role-id
 $ vault write -f auth/approle/role/jenkins/secret-id
 ```
 
-#### Test that you created correctly role_id/secret_id
+#### Test that you created correctly role_id/secret_id (using CLI)
 
 ``` bash
 vault write auth/approle/login \
@@ -102,7 +104,7 @@ vault write auth/approle/login \
 * VAULT_ADDR: for example: 'http://vault.vault.svc.cluster.local:8200' for k8s cluster
 * ROLE_ID:  RoleID for AppRole auth
 * SECRET_ID:  SecretID for AppRole auth   
-* VAULT_PREFIX: for example 'jenkins', 
+* VAULT_PREFIX: for example 'jenkins'
 * DUMP_ENCRYPTION_PASSWORD: password which will be used for secrets dump encryption
 
 ## Dump secrets under 'jenkins' vault prefix example
@@ -120,7 +122,7 @@ export DUMP_ENCRYPTION_PASSWORD='Your password'
 ###  install python dependencies
 
 ``` bash
-pip -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ### dump secrets
@@ -136,5 +138,6 @@ vault.dump_all_secrets_to_json(json_path='vault_secrets.json', encrypt_dump=True
 ``` python
 vault = VaultHandler(VAULT_ADDR, ROLE_ID, SECRET_ID, VAULT_PREFIX, DUMP_ENCRYPTION_PASSWORD)
 
-vault.populate_vault_from_dump('Jenkins', 'vault_secrets.json', 'json', True)
+vault.populate_vault_from_dump('jenkins', 'vault_secrets.json', 'json', True)
 ```
+
