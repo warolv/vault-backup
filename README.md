@@ -141,3 +141,13 @@ vault = VaultHandler(VAULT_ADDR, ROLE_ID, SECRET_ID, VAULT_PREFIX, DUMP_ENCRYPTI
 vault.populate_vault_from_dump('jenkins', 'vault_secrets.json', 'json', True)
 ```
 
+## More things that will be added
+
+* support for different authentication mechanisms
+* create CLI utility which will use vault_handler from CMD line
+* make it possible to import vault_handler
+* example of how to run scheduled backup from Jenkins
+* example of how to run scheduled backup using vault_handler and k8s cronjob
+
+PRs with with improvements/features are welcomed!
+
