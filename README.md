@@ -127,27 +127,73 @@ export DUMP_ENCRYPTION_PASSWORD='Your password'
 pip install -r requirements.txt
 ```
 
-### dump secrets
+## Vault's Handler CLI
 
-``` python
-vault = VaultHandler(VAULT_ADDR, ROLE_ID, SECRET_ID, VAULT_PREFIX, DUMP_ENCRYPTION_PASSWORD)
+``` bash
+$ python vault_handler.py
+Specify one of the commands below
 
-vault.dump_all_secrets_to_json(json_path='vault_secrets.json', encrypt_dump=True)
+print
+dump
+populate
 ```
 
-### populate Vault under 'jenkins' prefix from json encrypted secrets dump
+### print secrets (env variables must be exported first)
 
-``` python
-vault = VaultHandler(VAULT_ADDR, ROLE_ID, SECRET_ID, VAULT_PREFIX, DUMP_ENCRYPTION_PASSWORD)
+``` bash
+$ python vault_handler.py print
+```
 
-vault.populate_vault_from_dump('jenkins', 'vault_secrets.json', 'json', True)
+### dump secrets (env variables must be exported first)
+
+``` bash
+$ python vault_handler.py dump --help
+Usage: vault_handler.py dump [OPTIONS]
+
+  :   Dump secrets yaml/json from Vault.
+
+Options:
+  -f, --format TEXT      File format for dump with secrets: json/yaml
+  -dp, --dump_path TEXT  Path/name of dump with secrets
+  -e, --encrypt BOOLEAN  Encrypt secrets dump: True/False
+  --help                 Show this message and exit.
+```
+
+``` bash
+# json(default) encrypted(default) dump of secrets will be created:  vault_secrets.json.enc
+$ python vault_handler.py dump
+```
+
+``` bash
+# json(default) encrypted(default) dump of secrets will be created:  vault_secrets.json.enc
+$ python vault_handler.py dump -f 'yaml' -dp 'secrets.yaml.enc' -e True
+```
+
+### populate Vault under 'jenkins' prefix from json encrypted secrets dump (env variables must be exported first)
+
+``` bash
+python vault_handler.py populate --help
+Usage: vault_handler.py populate [OPTIONS]
+
+  :   Populate Vault prefix from dump with secrets.
+
+Options:
+  -vp, --vault_prefix TEXT  Vault's prefix to populate from secrets dump
+                            [required]
+  -dp, --dump_path TEXT     Path to dump with secrets
+  -f, --format TEXT         File format of dump with secrets: json/yaml
+  -e, --encrypted BOOLEAN   Is secrets dump Encrypted?: True/False
+  --help                    Show this message and exit.
+```
+
+``` bash
+python vault_handler.py populate -vp 'test_prefix' -dp 'secrets.json.enc' -f 'json' -e True
 ```
 
 ## More things that will be added
 
 * support for different authentication mechanisms
-* create CLI utility which will use vault_handler from CMD line
-* make it possible to import vault_handler
+* Add to PyPI as package
 * example of how to run scheduled backup from Jenkins
 * example of how to run scheduled backup using vault_handler and k8s cronjob
 

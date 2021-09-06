@@ -1,0 +1,78 @@
+// Create Jenkins scheduled job for daily vault backup example
+// I am using Vault Plugin in Jenkins https://plugins.jenkins.io/hashicorp-vault-plugin
+// to add secrets as env variables during job execution. 
+// Read more about how to integrate this plugin into jenkins here: https://igorzhivilo.com/jenkins/how-to-read-vault-secrets-from-declarative-pipeline
+
+// During job execution POD will be created with 2 contaienrs: awscli to use aws s3 utility, and push created encrypted dump to private s3 bucket (vault-backups), python to run VaultHandler.*
+
+
+def configuration = [vaultUrl: "${VAULT_URL}",  vaultCredentialId: "vault-role-app", engineVersion: 2]
+
+def secrets = [
+  [path: 'secret/jenkins/aws', engineVersion: 2, secretValues: [
+    [envVar: 'AWS_ACCESS_KEY_ID', vaultKey: 'aws_access_key_id'],
+    [envVar: 'AWS_SECRET_ACCESS_KEY', vaultKey: 'aws_secret_access_key']]],
+  [path: 'secret/jenkins/vault-backup', engineVersion: 2, secretValues: [
+    [envVar: 'VAULT_ADDR', vaultKey: 'vault_url'],
+    [envVar: 'ROLE_ID', vaultKey: 'role_id'],
+    [envVar: 'SECRET_ID', vaultKey: 'secret_id'],
+    [envVar: 'VAULT_PREFIX', vaultKey: 'vault_prefix'],
+    [envVar: 'DUMP_ENCRYPTION_PASSWORD', vaultKey: 'encryption_password']]],
+]
+
+def podTemplate = """
+                apiVersion: v1
+                kind: Pod
+                spec:
+                  containers:
+                    - name: awscli
+                      image: amazon/aws-cli
+                      command:
+                      - cat
+                      tty: true
+                    - name: python
+                      image: python:3.6
+                      command:
+                      - cat
+                      tty: true
+                """.stripIndent().trim()
+
+pipeline {
+  agent {
+    kubernetes {
+      defaultContainer 'jnlp'
+      yaml "${podTemplate}"
+    }
+  }
+
+  environment {
+    AWS_DEFAULT_REGION = "eu-west-1"
+  }
+
+  stages {
+    stage('Backup Jenkins'){
+      steps {
+        container('python'){
+          dir("${env.WORKSPACE}/pipelines-k8s/vault-backup/") {
+            withVault([configuration: configuration, vaultSecrets: secrets]){
+              sh """#!/bin/bash
+                pip install -r requirements.txt
+                python vault_handler.py dump
+                tar -zcvf vault_secrets.json.enc.tar.gz vault_secrets.json.enc
+              """
+            }
+          }
+        }
+        container('awscli'){
+          dir("${env.WORKSPACE}/pipelines-k8s/vault-backup/") {
+            withVault([configuration: configuration, vaultSecrets: secrets]){
+              sh '''
+                aws s3 cp vault_secrets.json.enc.tar.gz s3://vault-backups/$(date +%Y%m%d%H%M)/vault_secrets.json.enc.tar.gz
+              '''
+            }
+          }
+        }
+      }
+    }
+  }
+}
