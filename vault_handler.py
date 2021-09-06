@@ -20,6 +20,7 @@ import yaml
 import json
 from cryptography.fernet import Fernet
 import base64, hashlib
+import click
 
 VAULT_ADDR     = os.environ.get('VAULT_ADDR')
 ROLE_ID        = os.environ.get('ROLE_ID')
@@ -75,7 +76,7 @@ class VaultHandler:
             path='{0}/{1}'.format(self.path, key)
         )
 
-    def print_secrets_from_dict(self):
+    def print_secrets_nicely(self):
         secrets_dict = self._secrets_to_dict()
         for x in secrets_dict:
             print ('\n{0}'.format(x))
@@ -145,15 +146,90 @@ class VaultHandler:
               secret = secrets_dict[key],
           )
 
-    def populate_vault_from_dump(self, vault_prefix_to_populate, path_to_dump, dump_format, encoded=True):
+    def populate_vault_from_dump(self, vault_prefix_to_populate, path_to_dump, dump_format, encrypted=True):
         secrets_dict = {}
         if dump_format == 'json':
-            secrets_dict = self._json_dump_to_dict(path_to_dump, encoded)
+            secrets_dict = self._json_dump_to_dict(path_to_dump, encrypted)
         elif dump_format == 'yaml':
-            secrets_dict = self._yaml_dump_to_dict(path_to_dump, encoded)
+            secrets_dict = self._yaml_dump_to_dict(path_to_dump, encrypted)
 
         self._populate_vault_prefix_from_dict(secrets_dict, vault_prefix_to_populate)
 
 vault = VaultHandler(VAULT_ADDR, ROLE_ID, SECRET_ID, VAULT_PREFIX, DUMP_ENCRYPTION_PASSWORD)
-vault.dump_all_secrets_to_json()
+# vault.dump_all_secrets_to_json()
 # vault.populate_vault_from_dump('jenkins', 'vault_secrets.json', 'json', False)
+
+@click.group(invoke_without_command=True)
+@click.pass_context
+@click.option('--verbose', '-v', is_flag=True, help="Increase output verbosity level")
+def main(ctx, verbose):
+    group_commands = ['print', 'dump', 'populate']
+    """
+            VaultHandler is a command line tool that helps dump/populate secrets of HashiCorp's Vault 
+            example: python vault_handler.py dump -f json -p 'vault_secrets.json' encrypt=True
+            example: python vault_handler.py dump -f yaml -p 'vault_secrets.yml' encrypt=False
+            example: python vault_handler.py populate -pf 'jenkins' -p 'vault_secrets.yml' -f 'json' encrypt=False
+    """
+
+    if ctx.invoked_subcommand is None:
+        click.echo("Specify one of the commands below")
+        print(*group_commands, sep='\n')
+    ctx.obj['VERBOSE'] = verbose
+
+@main.command('print')
+@click.pass_context
+def print_secrets(ctx):
+    """
+        :   Print secrets nicely.
+    """
+    vault.print_secrets_nicely()
+
+@main.command('dump')
+@click.pass_context
+@click.option('--format', '-f',
+              type=str,
+              default='json',
+              help="File format for dump with secrets: json/yaml")
+@click.option('--dump_path', '-dp',
+              type=str,
+              default='vault_secrets.json',
+              help="Path/name of dump with secrets")
+@click.option('--encrypt', '-e',
+              type=bool,
+              default=True, help="Encrypt secrets dump: True/False")
+def dump_secrets(ctx, format, dump_path, encrypt):
+    """
+        :   Dump secrets yaml/json from Vault.
+    """
+    if format == 'json':
+        vault.dump_all_secrets_to_json(dump_path, encrypt)
+    elif format == 'yaml':
+        vault.dump_all_secrets_to_yaml(dump_path, encrypt)
+
+@main.command('populate')
+@click.pass_context
+@click.option('--vault_prefix', '-vp',
+              type=str,
+              required=True,
+              help="Vault's prefix to populate from secrets dump")
+@click.option('--dump_path', '-dp',
+              type=str,
+              default='vault_secrets.json.enc',
+              help="Path to dump with secrets")
+@click.option('--format', '-f',
+              type=str,
+              default='json',
+              help="File format of dump with secrets: json/yaml")
+@click.option('--encrypted', '-e',
+              type=bool,
+              default=True, help="Is secrets dump Encrypted?: True/False")
+def populate_vault_prefix(ctx, vault_prefix, dump_path, format, encrypted):
+    """
+        :   Populate Vault prefix from dump with secrets.
+    """
+    vault.populate_vault_from_dump(vault_prefix, dump_path, format, encrypted)
+ 
+  
+
+if __name__ == '__main__':
+    main(obj={})
