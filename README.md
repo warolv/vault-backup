@@ -6,7 +6,7 @@
 ![vault-backup](images/logo.png)
 
 You can read how to create scheduled backup with Jenkis in this post:
-[Scheduled backup of Vault secrets with Jenkins on Kubernetes](http://igorzhivilo.com/)
+[Scheduled backup of Vault secrets with Jenkins on Kubernetes](https://igorzhivilo.com/vault/scheduled-backup-vault-secrets/)
 
 ## You can use it to:
 
@@ -26,7 +26,7 @@ It uses RoleID and SecretID for login.
 
 Read more about AppRole authentication: 
 https://learn.hashicorp.com/vault/identity-access-management/approle
-https://codeburst.io/read-vaults-secrets-from-jenkin-s-declarative-pipeline-50a690659d6
+https://igorzhivilo.com/jenkins/how-to-read-vault-secrets-from-declarative-pipeline/
 
 ### How to enable AppRole auth and get RoleID and SecretID
 
@@ -193,7 +193,7 @@ python vault_handler.py populate -vp 'test_prefix' -dp 'secrets.json.enc' -f 'js
 ## More things that will be added
 
 * support for different authentication mechanisms
-* Add to PyPI as package
+* add to PyPI as package
 * example of how to run scheduled backup from Jenkins
 * example of how to run scheduled backup using vault_handler and k8s cronjob
 
