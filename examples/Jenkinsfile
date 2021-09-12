@@ -17,7 +17,7 @@ def secrets = [
     [envVar: 'ROLE_ID', vaultKey: 'role_id'],
     [envVar: 'SECRET_ID', vaultKey: 'secret_id'],
     [envVar: 'VAULT_PREFIX', vaultKey: 'vault_prefix'],
-    [envVar: 'DUMP_ENCRYPTION_PASSWORD', vaultKey: 'encryption_password']]],
+    [envVar: 'ENCRYPTION_KEY', vaultKey: 'encryption_key']]],
 ]
 
 def podTemplate = """
