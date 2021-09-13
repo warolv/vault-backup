@@ -1,0 +1,48 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: vault-backup
+spec:
+  schedule: "0 1 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          nodeSelector:
+            instance-type: spot
+          containers:
+            - name: awscli
+              image: amazon/aws-cli:latest
+              command:
+                - "aws"
+                - "s3"
+                - "cp"
+                - "/data/vault_secrets.enc"
+                - "s3://jenkins-backups/vault_secrets.enc"
+              imagePullPolicy: Always
+              envFrom:
+                - secretRef:
+                    name: aws-creds-secret
+              volumeMounts:
+              - name: backup-dir
+                mountPath: /data
+          initContainers:
+            - name: vault-backup
+              image: warolv/vault-backup
+              command: 
+                - "python3"
+                - "vault_handler.py"
+                - "dump"
+                - "-dp"
+                - "/data/vault_secrets.enc"
+              imagePullPolicy: Always
+              envFrom:
+                - secretRef:
+                    name: vault-backup-secret
+              volumeMounts:
+              - name: backup-dir
+                mountPath: /data
+          volumes:
+          - name: backup-dir
+            emptyDir: {}
