@@ -5,8 +5,10 @@
 
 ![vault-backup](images/logo.png)
 
-You can read how to create scheduled backup with Jenkis in this post:
+You can read how to create scheduled backup with *Jenkis* in this post:
 [Scheduled backup of Vault secrets with Jenkins on Kubernetes](https://igorzhivilo.com/vault/scheduled-backup-vault-secrets/)
+
+The second part of the 'Scheduled backup of HashiCorp's Vault secrets', using *Kubernetes CronJob* to create scheduled backups on daily basis post: [https://igorzhivilo.com/vault/scheduled-backup-vault-cronjob/](https://igorzhivilo.com/vault/scheduled-backup-vault-cronjob/)
 
 ## You can use it to:
 
@@ -186,8 +188,8 @@ python vault_handler.py populate -vp 'test_prefix' -dp 'vault_secrets.enc'
 
 * support for different authentication mechanisms
 * add to PyPI as package
-* example of how to run scheduled backup from Jenkins (Look at examples/Jenkinsfile)
-* example of how to run scheduled backup using vault_handler and k8s cronjob
+* example of how to run scheduled backup from Jenkins (Look at examples/jenkins/Jenkinsfile).
+* example of how to run scheduled backup using vault_handler and k8s cronjob (Look at examples/cronjob/cronjob.yaml).
 
 PRs with improvements/features are welcomed!
 

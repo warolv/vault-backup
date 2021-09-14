@@ -1,0 +1,1 @@
+The second part of the 'Scheduled backup of HashiCorp's Vault secrets', using *Kubernetes CronJob* to create scheduled backups on daily basis post: [https://igorzhivilo.com/vault/scheduled-backup-vault-cronjob/](https://igorzhivilo.com/vault/scheduled-backup-vault-cronjob/)
