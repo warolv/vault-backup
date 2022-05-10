@@ -1,0 +1,7 @@
+#!gpg-agent.conf
+.git
+Dockerfile
+.DS_Store
+.gitignore
+report
+README.md
