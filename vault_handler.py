@@ -206,5 +206,6 @@ def populate_vault_prefix(ctx, vault_prefix, dump_path):
     vault.populate_vault_from_dump(vault_prefix, dump_path)
 
 
+# pylint:disable=no-value-for-parameter
 if __name__ == '__main__':
     main(obj={})

@@ -44,13 +44,13 @@ jobs:
         with:
           context: .
           push: true
-          #tags: ${GITHUB_REPOSITORY}:latest,${GITHUB_REPOSITORY}:${{ github.sha }}
-          tags: ${GITHUB_REPOSITORY}:latest
+          #tags: ${{ github.repository }}:latest,${{ github.repository }}:${{ github.sha }}
+          tags: ${{ github.repository }}:latest
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "${GITHUB_REPOSITORY}:latest"
+          image-ref: ${{ github.repository }}:latest
           format: "template"
           template: "@/contrib/sarif.tpl"
           output: "trivy-results.sarif"
