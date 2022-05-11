@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push debug
-        run: echo "docker push ${{ github.repository }}/pgclient:latest,${{ env.REGISTRY }}/${{ github.repository }}/pgclient:latest"
+        run: echo "docker push ${{ github.repository }}/pgclient:latest,${{ github.event.repository.name }}/pgclient::${{ github.sha }}"
 
       - name: Build and push
         id: docker_build
@@ -48,8 +48,7 @@ jobs:
           context: .
           push: true
           #tags: ${{ github.repository }}:latest,${{ github.repository }}:${{ github.sha }}
-          #tags: ${{ github.repository }}:latest
-          tags: jusmundi/pgclient:latest,${{ env.REGISTRY }}/${{ github.repository }}/pgclient:latest
+          tags: ${{ github.repository }}/pgclient:latest
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master

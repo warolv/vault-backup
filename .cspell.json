@@ -97,8 +97,10 @@
     "pypirc",
     "pypi",
     "versioneer",
+    "hvac",
     "Fernet",
     "Voqo",
+    "Zhivilo",
     "awstats"
   ],
   "languageSettings": [
