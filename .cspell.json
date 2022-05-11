@@ -19,6 +19,7 @@
     "Dockerfile(-.+)?",
     ".jscpd.json",
     ".mega-linter.yml",
+    ".flake8",
     ".pre-commit-config.yaml",
     "LICENSE",
     "report"
