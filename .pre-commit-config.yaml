@@ -1,0 +1,83 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks.git
+    rev: v4.2.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-added-large-files
+        args: ["--maxkb=123"]
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-json
+        exclude: ^.vscode/
+      - id: check-xml
+      - id: check-yaml
+      - id: check-symlinks
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: detect-private-key
+      - id: double-quote-string-fixer
+      - id: name-tests-test
+      - id: end-of-file-fixer
+      - id: fix-encoding-pragma
+      - id: requirements-txt-fixer
+      - id: sort-simple-yaml
+  - repo: https://github.com/pre-commit/pre-commit.git
+    rev: v2.18.1
+    hooks:
+      - id: validate_manifest
+  - repo: https://github.com/asottile/reorder_python_imports.git
+    rev: v3.0.1
+    hooks:
+      - id: reorder-python-imports
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.2.3
+    hooks:
+      - id: add-trailing-comma
+  - repo: https://github.com/doublify/pre-commit-hindent.git
+    rev: b3680b6ebf9f7cf29b19307f246adef66756feef
+    hooks:
+      - id: hindent
+  - repo: https://github.com/detailyang/pre-commit-shell
+    rev: 1.0.5
+    hooks:
+      - id: shell-lint
+        #entry: pre_commit_hooks/shell-lint.sh -x
+        args: [-x]
+        exclude: >
+          (?x)^(
+              hooks|
+          )$
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.32.0
+    hooks:
+      - id: pyupgrade
+  - repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v1.6.0
+    hooks:
+      - id: autopep8
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.9.2
+    hooks:
+      - id: flake8
+        args: [--max-line-length=120]
+  - repo: https://github.com/pre-commit/pre-commit-docker-flake8
+    rev: v0.0.3
+    hooks:
+      - id: flake8-docker-not-for-production
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-nodejs
+    rev: v1.1.2
+    hooks:
+      - id: htmlhint
+        args: [--config, .htmlhintrc]
+      - id: htmllint
+      - id: markdown-toc
+        args: [--maxdepth, "3", -i]
+      - id: dockerfile_lint
+        args: [--json, --verbose, --dockerfile]
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.68.1
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_docs

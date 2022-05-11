@@ -1,11 +1,11 @@
 # Vault Backup
 
-* Save HashiCorp's Vault secrets as json/yaml dump 
-* Populate specific Vault prefix from json/yaml dump 
+* Save HashiCorp's Vault secrets as json/yaml dump
+* Populate specific Vault prefix from json/yaml dump
 
 ![vault-backup](images/logo.png)
 
-You can read how to create scheduled backup with *Jenkis* in this post:
+You can read how to create scheduled backup with *Jenkins* in this post:
 [Scheduled backup of Vault secrets with Jenkins on Kubernetes](https://igorzhivilo.com/vault/scheduled-backup-vault-secrets/)
 
 The second part of the 'Scheduled backup of HashiCorp's Vault secrets', using *Kubernetes CronJob* to create scheduled backups on daily basis post: [https://igorzhivilo.com/vault/scheduled-backup-vault-cronjob/](https://igorzhivilo.com/vault/scheduled-backup-vault-cronjob/)
@@ -26,7 +26,7 @@ Using the AppRole which is an authentication mechanism within Vault to allow mac
 
 It uses RoleID and SecretID for login.
 
-Read more about AppRole authentication: 
+Read more about AppRole authentication:
 https://learn.hashicorp.com/vault/identity-access-management/approle
 https://igorzhivilo.com/jenkins/how-to-read-vault-secrets-from-declarative-pipeline/
 
@@ -103,18 +103,21 @@ vault write auth/approle/login \
     secret_id=SECRET_ID
 ```
 
-## Envinronment variables
+## Environment variables
 
+<!-- markdown-link-check-disable -->
 * VAULT_ADDR: for example: 'http://vault.vault.svc.cluster.local:8200' for k8s cluster
 * ROLE_ID:  RoleID for AppRole auth
-* SECRET_ID:  SecretID for AppRole auth   
+* SECRET_ID:  SecretID for AppRole auth
 * VAULT_PREFIX: for example 'jenkins'
 * ENCRYPTION_KEY: encryption key(used by Fernet library) to encrypt your secrets dump
+<!-- markdown-link-check-enable -->
 
 ## Dump secrets under 'jenkins' vault prefix example
 
 ### export ENV variables
 
+<!-- markdown-link-check-disable -->
 ``` bash
 export VAULT_ADDR=http://vault.vault.svc.cluster.local:8200
 export ROLE_ID=7ae17fff9-11aa-16d2-b5cc-dbb964a50917
@@ -122,6 +125,7 @@ export SECRET_ID=6ae17eee9-11aa-16d2-b5cc-aaa964a99917
 export VAULT_PREFIX=jenkins
 export ENCRYPTION_KEY="21UEdPvS7JJJBsfWbSoNM3h5AP1IowZ7iUP_YQWVoqo=",
 ```
+<!-- markdown-link-check-enable -->
 
 ###  install python dependencies
 
@@ -181,7 +185,7 @@ Options:
 ```
 
 ``` bash
-python vault_handler.py populate -vp 'test_prefix' -dp 'vault_secrets.enc' 
+python vault_handler.py populate -vp 'test_prefix' -dp 'vault_secrets.enc'
 ```
 
 ## More things that will be added
@@ -192,4 +196,3 @@ python vault_handler.py populate -vp 'test_prefix' -dp 'vault_secrets.enc'
 * example of how to run scheduled backup using vault_handler and k8s cronjob (Look at examples/cronjob/cronjob.yaml).
 
 PRs with improvements/features are welcomed!
-
