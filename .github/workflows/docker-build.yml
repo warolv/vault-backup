@@ -30,7 +30,7 @@ jobs:
       - name: Install Node.Js
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Install bower
         run: npm install -g markdown-toc@latest secretlint@latest
@@ -59,7 +59,10 @@ jobs:
           context: .
           push: true
           #tags: ${{ github.repository }}:latest,${{ github.repository }}:${{ github.sha }}
-          tags: ${{ github.repository }}:latest
+          tags: ${{ env.OWNER }}/vault-backup:latest
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
