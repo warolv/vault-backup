@@ -1,0 +1,10 @@
+{
+  "all": true,
+  "include": [
+    "**/*.js"
+  ],
+  "exclude": [
+    "**/*.spec.js",
+    ".mega-linter.yml"
+  ]
+}

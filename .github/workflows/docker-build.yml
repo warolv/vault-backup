@@ -39,7 +39,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push debug
-        run: echo "docker push ${{ github.repository }}:latest,${{ github.event.repository.name }}:${{ github.sha }}"
+        run: echo "docker push ${{ env.OWNER }}/${{ github.event.repository.name }}:latest,${{ github.repository }}:${{ github.sha }}"
+        env:
+          REPO: ${{ github.event.repository.name }}
+          OWNER: ${{ github.event.repository.owner.login }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
 
       - name: Build and push
         id: docker_build
