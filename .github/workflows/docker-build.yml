@@ -56,10 +56,16 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          context: .
+          #context: .
           push: true
           #tags: ${{ github.repository }}:latest,${{ github.repository }}:${{ github.sha }}
-          tags: ${{ env.OWNER }}/vault-backup:0.0.1
+          #tags: ${{ env.OWNER }}/vault-backup:0.0.1
+          tags: jusmundi/vault-backup:0.0.1
+          build-args: |
+              VERSION=0.0.1
+              VAULT_PREFIX=gitlab
+              BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+              GIT_SHA=${GITHUB_SHA::8}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
