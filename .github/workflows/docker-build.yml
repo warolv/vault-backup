@@ -59,7 +59,7 @@ jobs:
           context: .
           push: true
           #tags: ${{ github.repository }}:latest,${{ github.repository }}:${{ github.sha }}
-          tags: ${{ env.OWNER }}/vault-backup:latest
+          tags: ${{ env.OWNER }}/vault-backup:0.0.1
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
