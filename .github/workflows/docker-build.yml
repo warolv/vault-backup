@@ -12,6 +12,12 @@ on:
     paths-ignore:
       - "**.md"
 
+env:
+  REPO: ${{ github.event.repository.name }}
+  OWNER: ${{ github.event.repository.owner.login }}
+  ISSUE_NUMBER: ${{ github.event.issue.number }}
+  HEAD_OWNER: ${{ github.event.pull_request.head.repo.owner.login }}
+
 jobs:
   build-template:
     name: Build Docker
@@ -40,10 +46,11 @@ jobs:
 
       - name: Build and push debug
         run: echo "docker push ${{ env.OWNER }}/${{ github.event.repository.name }}:latest,${{ github.repository }}:${{ github.sha }}"
+
+      - name: Print the GitHub context
         env:
-          REPO: ${{ github.event.repository.name }}
-          OWNER: ${{ github.event.repository.owner.login }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
 
       - name: Build and push
         id: docker_build
