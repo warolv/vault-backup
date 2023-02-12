@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 120
+ignore = E501
+exclude =
+    .git,
+    __pycache__,
+    old,
+    build,
+    dist,
+    .eggs,
+    .tox,
+    setup.py
+    versioneer.py
+    hooks/_version.py

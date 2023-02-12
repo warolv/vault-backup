@@ -1,6 +1,6 @@
 // Create Jenkins scheduled job for daily vault backup example
 // I am using Vault Plugin in Jenkins https://plugins.jenkins.io/hashicorp-vault-plugin
-// to add secrets as env variables during job execution. 
+// to add secrets as env variables during job execution.
 // Read more about how to integrate this plugin into jenkins here: https://igorzhivilo.com/jenkins/how-to-read-vault-secrets-from-declarative-pipeline
 
 // During job execution POD will be created with 2 contaienrs: awscli to use aws s3 utility, and push created encrypted dump to private s3 bucket (vault-backups), python to run VaultHandler.*

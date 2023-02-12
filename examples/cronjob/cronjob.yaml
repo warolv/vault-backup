@@ -31,7 +31,7 @@ spec:
           initContainers:
             - name: vault-backup
               image: warolv/vault-backup
-              command: 
+              command:
                 - "python3"
                 - "vault_handler.py"
                 - "dump"
