@@ -10,8 +10,10 @@ def configuration = [vaultUrl: "${VAULT_URL}",  vaultCredentialId: "vault-role-a
 
 def secrets = [
   [path: 'secret/jenkins/aws', engineVersion: 2, secretValues: [
-    [envVar: 'AWS_ACCESS_KEY_ID', vaultKey: 'aws_access_key_id'],
-    [envVar: 'AWS_SECRET_ACCESS_KEY', vaultKey: 'aws_secret_access_key']]],
+    [envVar: 'GCP_SERVICE_ACCOUNT', vaultKey: 'google_service_account'],
+    [envVar: 'GCP_PROJECT_ID', vaultKey: 'id_Project']
+    [envVar: 'GCP_LOCATION', vaultKey: 'name_region ' ]
+    [envVar: 'GCP_SECRET_ACCESS_KEY', vaultKey: 'gcp_secret_key']]],
   [path: 'secret/jenkins/vault-backup', engineVersion: 2, secretValues: [
     [envVar: 'VAULT_ADDR', vaultKey: 'vault_url'],
     [envVar: 'ROLE_ID', vaultKey: 'role_id'],
@@ -25,8 +27,8 @@ def podTemplate = """
                 kind: Pod
                 spec:
                   containers:
-                    - name: awscli
-                      image: amazon/aws-cli
+                    - name: gcloud-sdk
+                      image: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
                       command:
                       - cat
                       tty: true
@@ -39,14 +41,14 @@ def podTemplate = """
 
 pipeline {
   agent {
-    kubernetes {
+    any {
       defaultContainer 'jnlp'
       yaml "${podTemplate}"
     }
   }
 
   environment {
-    AWS_DEFAULT_REGION = "eu-west-1"
+    GCP_LOCATION = "name_region"
   }
 
   stages {
@@ -63,11 +65,11 @@ pipeline {
             }
           }
         }
-        container('awscli'){
+        container('gcloud_CLI'){
           dir("${env.WORKSPACE}/pipelines-k8s/vault-backup/") {
             withVault([configuration: configuration, vaultSecrets: secrets]){
               sh '''
-                aws s3 cp vault_secrets.json.enc.tar.gz s3://vault-backups/$(date +%Y%m%d%H%M)/vault_secrets.json.enc.tar.gz
+                 cp vault_secrets.json.enc.tar.gz gs://gcs-asia-northeast1-devops/$(date +%Y%m%d%H%M)/vault_secrets.json.enc.tar.gz
               '''
             }
           }
